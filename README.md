@@ -1,101 +1,104 @@
-TVOnDemand Database Project
+# TVOnDemand Database Project
 
-📌 Project Overview
+## 📌 Project Overview
 
-TVOnDemand is a comprehensive database system designed for a Video on Demand / Streaming Services platform. The architecture is based on the recognized Sakila Sample Database (v1.2) schema, adapted and extended to meet modern requirements for managing users, movies, actors, categories, stores/servers, and transactions.
+**TVOnDemand** is a comprehensive database system designed for a Video on Demand / Streaming Services platform. The architecture is based on the recognized **Sakila Sample Database (v1.2)** schema, adapted and extended to meet modern requirements for managing users, movies, actors, categories, stores/servers, and transactions.
 
-📁 Repository Structure & Contents
+## 📁 Repository Structure & Contents
 
 The repository contains the following core files:
 
-README.md: Project documentation and setup instructions.
+* **`README.md`**: Project documentation and setup instructions.
 
-ER BY WORKBENCH GENERATOR.png: The official Entity-Relationship Diagram (ERD) generated automatically via MySQL Workbench. It visually illustrates table structures, primary and foreign keys, as well as 1:N and N:M relationships across entities.
+* **`ER BY WORKBENCH GENERATOR.png`**: The official Entity-Relationship Diagram (ERD) generated automatically via **MySQL Workbench**. It visually illustrates table structures, primary and foreign keys, as well as 1:N and N:M relationships across entities.
 
-FINAL DATA.sql: The SQL Script containing schema selection (USE tvondemand;) and Data Manipulation Language (DML INSERT) statements to populate all database tables (such as actors, films, categories, users, etc.), ensuring a fully operational dataset out-of-the-box.
+* **`FINAL DATA.sql`**: The SQL Script containing schema selection (`USE tvondemand;`) and Data Manipulation Language (DML `INSERT`) statements to populate all database tables (such as actors, films, categories, users, etc.), ensuring a fully operational dataset out-of-the-box.
 
-🏗️ Database Architecture (tvondemand)
+## 🏗️ Database Architecture (`tvondemand`)
 
 The database consists of interconnected tables covering the following core modules:
 
-Content & Media Catalog:
+1. **Content & Media Catalog:**
 
-film: Detailed movie metadata (title, description, release year, duration, rating, etc.).
+   * `film`: Detailed movie metadata (title, description, release year, duration, rating, etc.).
 
-actor & film_actor: Actor details and N:M relationship mapping with films.
+   * `actor` & `film_actor`: Actor details and N:M relationship mapping with films.
 
-category & film_category: Movie genres and N:M relationship mapping.
+   * `category` & `film_category`: Movie genres and N:M relationship mapping.
 
-language: Audio and subtitle language availability.
+   * `language`: Audio and subtitle language availability.
 
-User & Staff Management:
+2. **User & Staff Management:**
 
-customer: Registered platform subscribers and user profiles.
+   * `customer`: Registered platform subscribers and user profiles.
 
-staff: Administrators and support staff profiles.
+   * `staff`: Administrators and support staff profiles.
 
-address, city, country: Geographic data and addresses for users and physical/digital nodes.
+   * `address`, `city`, `country`: Geographic data and addresses for users and physical/digital nodes.
 
-Inventory & Transaction Management:
+3. **Inventory & Transaction Management:**
 
-inventory: Available streams/copies mapped per store or distribution server.
+   * `inventory`: Available streams/copies mapped per store or distribution server.
 
-rental: History of content streams and rentals initiated by users.
+   * `rental`: History of content streams and rentals initiated by users.
 
-payment: Transaction history and payment records.
+   * `payment`: Transaction history and payment records.
 
-store: Information on service points and server branches.
+   * `store`: Information on service points and server branches.
 
-🚀 Setup & Installation Guide
+## 🚀 Setup & Installation Guide
 
-Prerequisites
+### Prerequisites
 
-RDBMS: MySQL Server 8.0+ or MariaDB 10.4+
+* **RDBMS**: MySQL Server 8.0+ or MariaDB 10.4+
 
-GUI Client (Optional): MySQL Workbench, DBeaver, or phpMyAdmin
+* **GUI Client (Optional)**: MySQL Workbench, DBeaver, or phpMyAdmin
 
-Execution Steps
+### Execution Steps
 
-Create the Database:
-Ensure the database target named tvondemand exists:
+1. **Create the Database:**
+   Ensure the database target named `tvondemand` exists:
 
-CREATE DATABASE IF NOT EXISTS tvondemand 
-DEFAULT CHARACTER SET utf8mb4 
-COLLATE utf8mb4_unicode_ci;
+   ```sql
+   CREATE DATABASE IF NOT EXISTS tvondemand 
+   DEFAULT CHARACTER SET utf8mb4 
+   COLLATE utf8mb4_unicode_ci;
+   ```
 
+2. **Import Schema & Data:**
+   Execute the `FINAL DATA.sql` script via your preferred CLI or database management software:
 
-Import Schema & Data:
-Execute the FINAL DATA.sql script via your preferred CLI or database management software:
+   * **Via Command Line Interface (CLI):**
 
-Via Command Line Interface (CLI):
+     ```bash
+     mysql -u [username] -p tvondemand < "FINAL DATA.sql"
+     ```
 
-mysql -u [username] -p tvondemand < "FINAL DATA.sql"
+   * **Via MySQL Workbench / DBeaver:**
 
+     1. Open the `FINAL DATA.sql` file in the SQL editor.
 
-Via MySQL Workbench / DBeaver:
+     2. Ensure execution is targeted at the `tvondemand` schema.
 
-Open the FINAL DATA.sql file in the SQL editor.
+     3. Run/Execute the script.
 
-Ensure execution is targeted at the tvondemand schema.
+3. **Verify Installation:**
+   Run the following query to confirm data was successfully populated:
 
-Run/Execute the script.
+   ```sql
+   USE tvondemand;
+   SELECT COUNT(*) FROM actor;
+   SELECT * FROM film LIMIT 10;
+   ```
 
-Verify Installation:
-Run the following query to confirm data was successfully populated:
+## 📊 Entity-Relationship Diagram
 
-USE tvondemand;
-SELECT COUNT(*) FROM actor;
-SELECT * FROM film LIMIT 10;
+Refer to the **`ER BY WORKBENCH GENERATOR.png`** image file to review the database design and table relationships.
 
+## 🛠️ Technologies Used
 
-📊 Entity-Relationship Diagram
+* **SQL / MySQL**: Data Definition & Manipulation Languages (DDL / DML).
 
-Refer to the ER BY WORKBENCH GENERATOR.png image file to review the database design and table relationships.
+* **MySQL Workbench**: ERD modeling and automated diagram generation.
 
-🛠️ Technologies Used
-
-SQL / MySQL: Data Definition & Manipulation Languages (DDL / DML).
-
-MySQL Workbench: ERD modeling and automated diagram generation.
-
-Sakila DB Schema (v1.2): Reference model foundation.
+* **Sakila DB Schema (v1.2)**: Reference model foundation.
