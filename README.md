@@ -2,7 +2,7 @@
 
 ## 📌 Project Overview
 
-**TVOnDemand** is a comprehensive database system designed for a Video on Demand / Streaming Services platform. The architecture is based on the recognized **Sakila Sample Database (v1.2)** schema, adapted and extended to meet modern requirements for managing users, movies, actors, categories, stores/servers, and transactions.
+**TVOnDemand** is a comprehensive database system designed for a Video on Demand / Streaming Services platform. The architecture adapted and extended to meet modern requirements for managing users, movies, actors, categories, stores/servers, and transactions.
 
 ## 📁 Repository Structure & Contents
 
@@ -52,8 +52,6 @@ The database consists of interconnected tables covering the following core modul
 
 * **RDBMS**: MySQL Server 8.0+ or MariaDB 10.4+
 
-* **GUI Client (Optional)**: MySQL Workbench, DBeaver, or phpMyAdmin
-
 ### Execution Steps
 
 1. **Create the Database:**
@@ -100,5 +98,3 @@ Refer to the **`ER BY WORKBENCH GENERATOR.png`** image file to review the databa
 * **SQL / MySQL**: Data Definition & Manipulation Languages (DDL / DML).
 
 * **MySQL Workbench**: ERD modeling and automated diagram generation.
-
-* **Sakila DB Schema (v1.2)**: Reference model foundation.
