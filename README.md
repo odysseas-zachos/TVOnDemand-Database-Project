@@ -50,9 +50,3 @@ The database consists of interconnected tables covering the following core modul
 ## 📊 Entity-Relationship Diagram
 
 Refer to the **`ER BY WORKBENCH GENERATOR.png`** image file to review the database design and table relationships.
-
-## 🛠️ Technologies Used
-
-* **SQL / MySQL**: Data Definition & Manipulation Languages (DDL / DML).
-
-* **MySQL Workbench**: ERD modeling and automated diagram generation.
