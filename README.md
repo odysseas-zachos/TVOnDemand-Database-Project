@@ -46,48 +46,6 @@ The database consists of interconnected tables covering the following core modul
 
    * `store`: Information on service points and server branches.
 
-## 🚀 Setup & Installation Guide
-
-### Prerequisites
-
-* **RDBMS**: MySQL Server 8.0+ or MariaDB 10.4+
-
-### Execution Steps
-
-1. **Create the Database:**
-   Ensure the database target named `tvondemand` exists:
-
-   ```sql
-   CREATE DATABASE IF NOT EXISTS tvondemand 
-   DEFAULT CHARACTER SET utf8mb4 
-   COLLATE utf8mb4_unicode_ci;
-   ```
-
-2. **Import Schema & Data:**
-   Execute the `FINAL DATA.sql` script via your preferred CLI or database management software:
-
-   * **Via Command Line Interface (CLI):**
-
-     ```bash
-     mysql -u [username] -p tvondemand < "FINAL DATA.sql"
-     ```
-
-   * **Via MySQL Workbench / DBeaver:**
-
-     1. Open the `FINAL DATA.sql` file in the SQL editor.
-
-     2. Ensure execution is targeted at the `tvondemand` schema.
-
-     3. Run/Execute the script.
-
-3. **Verify Installation:**
-   Run the following query to confirm data was successfully populated:
-
-   ```sql
-   USE tvondemand;
-   SELECT COUNT(*) FROM actor;
-   SELECT * FROM film LIMIT 10;
-   ```
 
 ## 📊 Entity-Relationship Diagram
 
