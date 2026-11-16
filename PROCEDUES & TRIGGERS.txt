@@ -1,0 +1,321 @@
+-- 3.4.a
+
+DROPPROCEDUREIFEXISTS last_names;
+
+ DELIMITER $
+
+CREATEPROCEDURE last_names(IN lastname_a VARCHAR(255), IN lastname_b VARCHAR(255))
+BEGIN
+SELECT first_name, last_name FROM actor
+WHERE  last_name  >= CONCAT(lastname_a, '%')  AND last_name <CONCAT(lastname_b, '%')
+ORDER BY last_name ASC;
+END $
+
+ DELIMITER ;
+
+
+-- 3.4.b
+
+DROPPROCEDUREIFEXISTS same_last_names;
+
+DELIMITER $
+
+CREATEPROCEDURE same_last_names (IN surname varchar(45))
+
+BEGIN
+DECLARE lastname varchar(45);
+DECLARE done BOOLEANDEFAULT false;
+DECLAREtimesINT;
+
+DECLARE curLastName
+CURSOR FOR
+SELECTcount(actor_id),last_name from actor WHERE last_name = surname GROUP BY last_name;
+
+
+DECLARECONTINUE HANDLER
+        FOR NOT FOUND SET done = true;
+
+OPEN curLastName;
+
+REPEAT
+IF (NOT done) THEN
+FETCH curLastName INTOtimes,lastname;
+ENDIF;
+    UNTIL done ENDREPEAT;
+
+CLOSE curLastName;
+
+SELECTCONCAT("Last name ",lastname," found ",times," times") AS Result;
+
+END $
+
+DELIMITER ;
+
+
+
+
+
+---  Triggers for insert, delete, update on rental ---
+--- MOVIES ---
+
+DROP TRIGGER IFEXISTS trigger4_1_1;
+delimiter $
+
+CREATE TRIGGER trigger4_1_1 BEFOREINSERTON movie_rental
+for each row
+begin
+DECLARE movie_rental_id int;
+SET movie_rental_id = (SELECT rental_id FROM movie_rental WHERE rental_id = new.rental_id);
+IF movie_rental_id ISNULLTHEN
+INSERTINTO logs VALUES(null,new.customer_id,now(),'insert','movie_rental');
+ENDIF;
+END $
+delimiter ;
+
+DROP TRIGGER IFEXISTS trigger4_1_2;
+delimiter $
+
+CREATE TRIGGER trigger4_1_2 BEFOREUPDATEON movie_rental
+for each row
+begin
+IF new.rental_id=old.rental_id and new.rental_date=old.rental_date and new.inventory_id = old.inventory_id and new.customer_id = old.customer_id THEN
+    SIGNAL SQLSTATE VALUE'45000'SET MESSAGE_TEXT = 'update failed due to duplicate fields in table movie_rental';
+ELSE
+INSERTINTO logs VALUES(null,new.customer_id,now(),'update','movie_rental');
+ENDIF;
+IF (old.rental_id <> new.rental_id) THEN
+    SIGNAL SQLSTATE VALUE'45000'SET MESSAGE_TEXT = 'update failed as rental_id must be unique';
+ENDIF;
+END $
+delimiter ;
+
+
+DROP TRIGGER IFEXISTS trigger4_1_3;
+delimiter $
+
+CREATE TRIGGER trigger4_1_3 BEFOREDELETEON movie_rental
+for each row
+begin
+
+INSERTINTO logs VALUES(old.customer_id,now(),'delete','movie_rental');
+
+END $
+delimiter ;
+
+
+/**--- Triggers for insert, update, delete on payment ---**/
+DROP TRIGGER IFEXISTS trigger4_1_4;
+delimiter $
+
+CREATE TRIGGER trigger4_1_4 BEFOREINSERTON movie_payment
+for each row
+begin
+DECLARE movie_payment_id int;
+SET movie_payment_id = (SELECT payment_id FROM movie_payment WHERE payment_id = new.payment_id);
+IF movie_payment_id ISNULLTHEN
+INSERTINTO logs VALUES(new.customer_id,now(),'insert','movie_payment');
+ENDIF;
+END $
+delimiter ;
+
+
+
+DROP TRIGGER IFEXISTS trigger4_1_5;
+delimiter $
+
+CREATE TRIGGER trigger4_1_5 BEFOREUPDATEON movie_payment
+for each row
+begin
+IF new.payment_id = old.payment_id and new.customer_id = old.customer_id and new.rental_id = old.rental_id and new.amount = old.amount and new.payment_date = old.payment_date THEN
+    SIGNAL SQLSTATE VALUE'45000'SET MESSAGE_TEXT = 'update failed due to duplicate fields in table movie_payment';
+ELSE
+INSERTINTO logs VALUES(new.customer_id,now(),'update','movie_payment');
+ENDIF;
+IF (old.payment_id <> new.payment_id) THEN
+    SIGNAL SQLSTATE VALUE'45000'SET MESSAGE_TEXT = 'update failed as payment_id must be unique';
+ENDIF;
+END $
+delimiter ;
+
+
+DROP TRIGGER IFEXISTS trigger4_1_6;
+delimiter $
+
+CREATE TRIGGER trigger4_1_6 BEFOREDELETEON movie_payment
+for each row
+begin
+
+INSERTINTO logs VALUES(old.customer_id,now(),'delete','movie_payment');
+
+END $
+delimiter ;
+
+
+/**---  Triggers for insert, delete, update on rental ---
+                  --- SERIES ---**/
+DROP TRIGGER IFEXISTS trigger4_1_7;
+delimiter $
+
+CREATE TRIGGER trigger4_1_7 BEFOREINSERTON series_rental
+for each row
+begin
+DECLARE series_rental_id int;
+SET series_rental_id = (SELECT series_rental_id FROM series_rental WHERE series_rental_id = new.series_rental_id);
+IF series_rental_id ISNULLTHEN
+INSERTINTO logs VALUES(new.customer_id,now(),'insert','series_rental');
+ENDIF;
+END $
+delimiter ;
+
+
+
+DROP TRIGGER IFEXISTS trigger4_1_8;
+delimiter $
+
+CREATE TRIGGER trigger4_1_8 BEFOREUPDATEON series_rental
+for each row
+begin
+IF new.series_rental_id = old.series_rental_id and new.rental_date=old.rental_date and new.inventory_id = old.inventory_id and new.customer_id = old.customer_id THEN
+    SIGNAL SQLSTATE VALUE'45000'SET MESSAGE_TEXT = 'update failed due to duplicate fields in table series_rental';
+ELSE
+INSERTINTO logs VALUES(new.customer_id,now(),'update','series_rental');
+ENDIF;
+IF (old.series_rental_id <> new.series_rental_id) THEN
+    SIGNAL SQLSTATE VALUE'45000'SET MESSAGE_TEXT = 'update failed as rental_id must be unique';
+ENDIF;
+END $
+delimiter ;
+
+
+
+DROP TRIGGER IFEXISTS trigger4_1_9;
+delimiter $
+
+CREATE TRIGGER trigger4_1_9 BEFOREDELETEON series_rental
+for each row
+begin
+
+INSERTINTO logs VALUES(old.customer_id,now(),'delete','series_rental');
+
+END $
+delimiter ;
+
+
+
+/**--- Triggers for insert, update, delete on payment ---**/
+DROP TRIGGER IFEXISTS trigger4_1_10;
+delimiter $
+
+CREATE TRIGGER trigger4_1_10 BEFOREINSERTON series_payment
+for each row
+begin
+DECLARE series_payment_id int;
+SET series_payment_id = (SELECT series_payment_id FROM series_payment WHERE series_payment_id = new.series_payment_id);
+IF series_payment_id ISNULLTHEN
+INSERTINTO logs VALUES(new.customer_id,now(),'insert','series_payment');
+ENDIF;
+END $
+delimiter ;
+
+
+DROP TRIGGER IFEXISTS trigger4_1_11;
+delimiter $
+
+CREATE TRIGGER trigger4_1_11 BEFOREUPDATEON series_payment
+for each row
+begin
+IF new.series_payment_id = old.series_payment_id and new.customer_id = old.customer_id and new.series_rental_id = old.series_rental_id and new.amount = old.amount and new.payment_date = old.payment_date THEN
+    SIGNAL SQLSTATE VALUE'45000'SET MESSAGE_TEXT = 'update failed due to duplicate fields in table series_payment';
+ELSE
+INSERTINTO logs VALUES(new.customer_id,now(),'update','series_payment');
+ENDIF;
+END $
+delimiter ;
+
+
+DROP TRIGGER IFEXISTS trigger4_1_12;
+delimiter $
+
+CREATE TRIGGER trigger4_1_12 BEFOREDELETEON series_payment
+for each row
+begin
+
+INSERTINTO logs VALUES(old.customer_id,now(),'delete','series_payment');
+
+END $
+delimiter ;
+
+
+DROP TRIGGER IFEXISTS trigger4_2;
+delimiter $
+
+CREATE TRIGGER trigger4_2 BEFOREINSERTON movie_payment
+for each row
+begin
+DECLARE discount DECIMAL(5,2);
+IF (SELECT(COUNT(customer_id)>2) AND rental_date like CURRENT_DATE()) THEN
+SET discount = (SELECT amount FROM movie_payment)/2;
+INSERTINTO movie_payment (payment_id, customer_id, rental_id, amount, payment_date) VALUES (new.payment_id, customer_id, new.rental_id, discount, CURRENT_DATE);
+ENDIF;
+END $
+delimiter ;
+
+
+
+
+DROP TRIGGER IFEXISTS trigger4_3;
+delimiter $
+
+CREATE TRIGGER trigger4_3 AFTERUPDATEON customer
+for each row
+begin
+IF (old.customer_id <> new.customer_id) THEN
+    SIGNAL SQLSTATE VALUE'45000'SET MESSAGE_TEXT = 'Customer id can not be changed due to not having the required privileges!';
+ENDIF;
+IF (old.create_date <> new.create_date) THEN
+      SIGNAL SQLSTATE VALUE'45000'SET MESSAGE_TEXT = 'Creation date can not be changed!';
+ENDIF;
+IF (old.active = 1) THEN
+IF (old.active <> new.active) THEN
+        SIGNAL SQLSTATE VALUE'45000'SET MESSAGE_TEXT = 'Status can not be changed to zero since user is active!';
+ENDIF;
+ENDIF;
+END $
+delimiter ;
+
+
+DROP TRIGGER IFEXISTS trigger4_2;
+delimiter $
+
+CREATE TRIGGER trigger4_2 AFTERUPDATEON movie_payment
+for each row
+begin
+DECLARE discount DECIMAL(5,2);
+DECLARE discount_date datetime;
+DECLARE rental_count int;
+DECLARE rental_amount decimal(5,2);
+IF (SELECT rental_id FROM MOVIE_RENTAL WHERESUBSTRING(rental_date,1,10) LIKESUBSTRING(current_timestamp,1,10)) THEN
+SET discount_date = SUBSTRING(current_timestamp,1,10);
+ENDIF;
+SET rental_count = (SELECTCOUNT(customer_id) FROM MOVIE_RENTAL WHERE old.customer_id = new.customer_id GROUP BY customer_id);
+IF (rental_count >2ANDSUBSTRING(rental_date,1,10) LIKE discount_date) THEN
+SET rental_amount = (SELECT amount FROM movie_payment WHERE old.customer_id = new.customer_id);
+SET discount = rental_amount/2;
+INSERTINTO movie_payment (payment_id, customer_id, rental_id, amount, payment_date) VALUES (new.payment_id, new.customer_id, new.rental_id, discount, current_timestamp);
+ENDIF;
+END $
+delimiter ;
+
+
+
+
+
+call most_rents_on_dates('m', 5, '2000-12-31','2021-12-31');
+
+call monthly_earnings('GILBERT.SLEDGE@sakilacustomer.org', '2005-06-19');
+
+call most_rents_on_date_of_customer();
+
+call last_names('ay','be');
+
+call same_last_names('DAVIS');
